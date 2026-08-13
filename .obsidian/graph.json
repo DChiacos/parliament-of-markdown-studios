@@ -1,0 +1,11 @@
+{
+  "collapse-filter": false,
+  "collapse-display": false,
+  "showOrphans": true,
+  "showAttachments": true,
+  "hideUnresolved": false,
+  "showArrow": true,
+  "nodeSizeMultiplier": 1.2,
+  "lineSizeMultiplier": 1.1
+}
+
