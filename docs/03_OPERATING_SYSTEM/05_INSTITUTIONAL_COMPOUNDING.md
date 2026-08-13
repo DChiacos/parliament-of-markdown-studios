@@ -1,6 +1,6 @@
 ---
 title: "Institutional Compounding"
-version: "1.0.0"
+version: "1.1.0"
 ---
 
 # Institutional Compounding
@@ -21,12 +21,19 @@ The first destination may be a semi-organized hub. Final classification can wait
 observation
   -> captured idea
   -> tested method
-  -> reusable guide
-  -> ratified procedure
+  -> candidate guide or procedure
+  -> field verification
+  -> explicit human ratification
   -> institutional default
+  -> next reserved shell
 ```
 
 ## Evidence standard
 
 Do not canonize an attractive theory merely because it is fluent. Record the field case, the mechanism, the result, known limitations, and the human judgment that made the method useful.
 
+## From evidence to procedure
+
+A recurring ambiguity does not jump directly from conversation to law. It moves through capture, an existing-system search, a bounded decision docket when human authority is required, candidate development, field verification, and explicit ratification.
+
+See the [Incident-to-SOP Lifecycle](06_INCIDENT_TO_SOP_LIFECYCLE.md) and the [Decision Docket and Candidate Intake Template](../04_TEMPLATES/04_DECISION_DOCKET_AND_CANDIDATE_INTAKE.md).
