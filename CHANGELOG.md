@@ -2,6 +2,13 @@
 
 Repository releases describe sanitized public snapshots. They may lag the living private Parliament, which remains the institutional Source of Truth.
 
+## [Unreleased]
+
+### Added
+
+- Candidate pattern: Relay, the Parliament Post Office. Two agents work back and forth through a shared mailbox under a mission charter, with scheduled checks, recorded human approval for spend, and automatic expiry back to the human.
+- Candidate template: Relay protocol and message.
+
 ## [1.1.0] - 2026-08-13
 
 ### Added
