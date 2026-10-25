@@ -9,6 +9,7 @@ Repository releases describe sanitized public snapshots. They may lag the living
 - Candidate pattern: Relay, the Parliament Post Office. Two agents work back and forth through a shared mailbox under a mission charter, with scheduled checks, recorded human approval for spend, and automatic expiry back to the human.
 - Candidate template: Relay protocol and message.
 - Public Memory Pods index and the first pod, The Discovery of the Relay.
+- Candidate tool: Approval Desk starter kit (`tools/approval-desk/`), in a Codex-leaning and a Claude-leaning edition with a shared record template and an in-memory demo. Human decides and resolves; question threads per card.
 
 ## [1.1.0] - 2026-08-13
 

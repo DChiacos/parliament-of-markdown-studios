@@ -1,0 +1,224 @@
+<!--
+MDS SOP38 Trackable Approvals · Approval Desk template v0.2.0 (25/10/2026)
+Origin: SOP38 Approval Desk. Generic demonstration data.
+Runs as a claude.ai Artifact with capabilities {db:{}}. Collections:
+  approvals/<AP-nnn>: order, ref, kind, cost, by, createdAt, title, proposal,
+                      status pending|approved|changes|rejected, note, decidedAt, decidedAtISO,
+                      thread open|resolved, threadResolvedAt
+  threads/<AP-nnn-mN>: card, by, text, at, atISO
+Rules: officers seed cards and answer threads; only the Commander decides and resolves.
+Replace PREVIEW · sample data, nothing is saved before publishing. Never hardcode cards: seed the db after publish.
+-->
+<title>Commander Approval Desk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600&family=Fira+Sans+Condensed:wght@600;700&family=Fira+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single column "call sheet" — pending decisions on top as cards, decided ones below as a compact log. */
+:root{
+  --bg:#f3f1ec; --surface:#ffffff; --ink:#1d2430; --muted:#6b7280; --line:#e2ddd3;
+  --accent:#e2611b; --ok:#1f7a4d; --warn:#b7791f; --no:#b3261e; --chip:#f6ece4;
+  --display:"Fira Sans Condensed","Fira Sans",system-ui,sans-serif;
+  --body:"Fira Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Fira Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14171c; --surface:#1d2129; --ink:#e9e6df; --muted:#9aa1ad; --line:#2d323c;
+  --accent:#f0813f; --ok:#4cb882; --warn:#e0a84a; --no:#ef6b62; --chip:#2b2620; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14171c; --surface:#1d2129; --ink:#e9e6df; --muted:#9aa1ad; --line:#2d323c;
+  --accent:#f0813f; --ok:#4cb882; --warn:#e0a84a; --no:#ef6b62; --chip:#2b2620; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 48px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+header{display:flex;flex-direction:column;gap:4px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--display);font-size:30px;line-height:1.1;margin:0;text-wrap:balance}
+.sub{color:var(--muted);margin:0;max-width:62ch}
+.tally{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.tally b{color:var(--ink);font-variant-numeric:tabular-nums}
+h2{font-family:var(--display);font-size:18px;margin:8px 0 0;letter-spacing:.01em}
+.list{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.chip{background:var(--chip);color:var(--ink);border-radius:999px;padding:2px 9px}
+.chip.cost{color:var(--accent);font-weight:500}
+.chip.free{color:var(--ok)}
+.title{font-family:var(--display);font-size:19px;line-height:1.2;margin:0;text-wrap:balance}
+.proposal{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.by{font-size:12px;color:var(--muted)}
+textarea{width:100%;box-sizing:border-box;min-height:44px;resize:vertical;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;padding:8px 10px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;font-weight:600;border-radius:8px;padding:8px 14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+button.chg{color:var(--warn);border-color:var(--warn)}
+button.no{color:var(--no);border-color:var(--no)}
+button:disabled{opacity:.5;cursor:default}
+.log{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.row{display:grid;grid-template-columns:96px 1fr;gap:12px;padding:10px 14px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.status{font-family:var(--mono);font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.s-approved{color:var(--ok)} .s-changes{color:var(--warn)} .s-rejected{color:var(--no)}
+.row .t{font-weight:500;overflow-wrap:anywhere}
+.row .n{color:var(--muted);font-size:13px;overflow-wrap:anywhere}
+.empty{color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:16px}
+.err{color:var(--no);font-size:13px}
+.thread{border-top:1px dashed var(--line);padding-top:10px;display:flex;flex-direction:column;gap:8px}
+.msg{border-radius:8px;padding:8px 10px;background:var(--bg);max-width:92%}
+.msg.c{background:var(--chip);align-self:flex-end}
+.msg .who{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.msg p{margin:2px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.tstate{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tstate .open{color:var(--accent);font-weight:500}
+.tstate .res{color:var(--ok)}
+button.sm{padding:5px 10px;font-size:13px;font-weight:500}
+button.link{border:0;background:none;color:var(--accent);padding:0;font-size:13px;font-weight:500}
+.thread button.link{align-self:flex-start}
+details>summary{cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.row .thread{margin-top:6px}
+@media (max-width:480px){.row{grid-template-columns:1fr;gap:2px}}
+@media (prefers-reduced-motion:no-preference){.card{transition:opacity .2s}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">PREVIEW · sample data, nothing is saved</div>
+    <h1>Commander Approval Desk</h1>
+    <p class="sub">Quick decisions from the production. Tap a button, add a note if you want; officers read your answer from here, no copy-paste. Any card can carry a question thread: ask, the officer answers here, and you close it when it's settled.</p>
+    <div class="tally" id="tally"><span>Loading…</span></div>
+  </header>
+
+  <section id="threadsWrap" hidden><h2>Open threads</h2>
+  <div class="list" id="threads"></div></section>
+
+  <h2>Waiting for you</h2>
+  <div class="list" id="pending"><div class="empty">Loading the approvals…</div></div>
+
+  <h2>Decided</h2>
+  <div class="log" id="decided"><div class="row"><div></div><div class="n">Nothing decided yet.</div></div></div>
+  <p class="err" id="err" hidden></p>
+</div>
+
+<script>
+/* PREVIEW ONLY: in-memory stand-in for the claude.ai db so the desk can be opened from disk. Nothing is saved. */
+(function(){
+  const store={"approvals": {"DEMO-001": {"order": 1, "ref": "Onboarding", "kind": "Design", "cost": 0, "by": "Officer", "title": "Approve the sample layout", "proposal": "Review this sample and ask a question before deciding. Demo only; nothing is saved.", "status": "pending"}, "DEMO-002": {"order": 2, "ref": "Example", "kind": "Design", "cost": 0, "by": "Officer", "title": "Example approved card with discussion", "proposal": "A fictional example.", "status": "approved", "thread": "open"}}, "threads": {"demo-message": {"card": "DEMO-002", "by": "Officer", "text": "This is an example answer. Only the human resolves the discussion.", "at": "Demo", "atISO": "2026-10-25T00:00:00Z"}}};
+  const subs={approvals:[],threads:[]};
+  const snap=c=>({docs:Object.entries(store[c]).map(([id,d])=>({id,data:()=>({...d})}))});
+  const fire=c=>subs[c].forEach(f=>f(snap(c)));
+  let n=0;
+  const col=c=>({onSnapshot(f){subs[c].push(f);setTimeout(()=>f(snap(c)));},
+    doc:id=>({update:async d=>{Object.assign(store[c][id],d);fire(c);}}),
+    add:async d=>{store[c][c+"-"+(++n)]=d;fire(c);}});
+  window.claude={use:async name=>name==="db"?{collection:col}:null};
+})();
+</script>
+<script>
+(async function(){
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  let db = null;
+  try { db = await window.claude?.use?.("db"); } catch(e) { db = null; }
+  if (!db) {
+    $("pending").innerHTML = '<div class="empty">This view can\'t reach the approvals store. Open the page in the Claude app while signed in.</div>';
+    $("tally").innerHTML = ""; $("decided").innerHTML = ""; return;
+  }
+  const col = db.collection("approvals");
+  const tcol = db.collection("threads");
+  const label = {approved:"Approved",changes:"Change",rejected:"No"};
+  let items = [], msgs = [], composing = new Set(), drafts = {};
+  const stampNow = () => { const n = new Date(); return {at:n.toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo"}), atISO:n.toISOString()}; };
+  function costChip(c){
+    if (c === undefined || c === null || c === "" || c === 0 || c === "0") return '<span class="chip free">no cost</span>';
+    return '<span class="chip cost">' + esc(c) + (typeof c === "number" ? " cr" : "") + '</span>';
+  }
+  const isCmd = m => /commander|daniel/i.test(m.by||"");
+  function threadOf(id){ return msgs.filter(m => m.card === id).sort((a,b)=>String(a.atISO||"").localeCompare(String(b.atISO||""))); }
+  function threadHTML(i){
+    const t = threadOf(i.id); const st = i.thread || (t.length ? "open" : "");
+    const bubbles = t.map(m => `<div class="msg ${isCmd(m)?'c':''}"><div class="who">${esc(m.by||"")} · ${esc(m.at||"")}</div><p>${esc(m.text)}</p></div>`).join("");
+    const last = t[t.length-1];
+    const waiting = st==="open" ? (last && !isCmd(last) ? "waiting on you" : "waiting on the officer") : "";
+    const box = (st==="open" || composing.has(i.id)) ? `
+      <textarea data-reply="${esc(i.id)}" placeholder="${t.length?'Reply…':'Ask a question about this card…'}">${esc(drafts[i.id]||"")}</textarea>
+      <div class="actions"><button class="sm" data-t="send" data-id="${esc(i.id)}">${t.length?'Reply':'Ask'}</button>
+      ${st==="open"?`<button class="sm ok" data-t="resolve" data-id="${esc(i.id)}">Resolve thread</button>`:''}</div>` : "";
+    if (!t.length) return `<div class="thread" style="border:0;padding:0">${box || `<button class="link" data-t="ask" data-id="${esc(i.id)}">Ask a question</button>`}</div>`;
+    if (st==="resolved" && !composing.has(i.id)) return `<div class="thread"><details><summary>Thread resolved · ${t.length} message${t.length>1?'s':''}${i.threadResolvedAt?' · '+esc(i.threadResolvedAt):''}</summary><div class="thread" style="border:0">${bubbles}</div></details><button class="link" data-t="ask" data-id="${esc(i.id)}">Reopen with a question</button></div>`;
+    return `<div class="thread"><div class="tstate"><span class="open">Thread open</span><span>${waiting}</span></div>${bubbles}${box}</div>`;
+  }
+  function render(){
+    const active = document.activeElement?.dataset?.reply;
+    const pend = items.filter(i => (i.status||"pending") === "pending").sort((a,b)=>(a.order??999)-(b.order??999));
+    const done = items.filter(i => i.status && i.status !== "pending").sort((a,b)=>String(b.decidedAt||"").localeCompare(String(a.decidedAt||"")));
+    const openDone = done.filter(i => i.thread === "open" || composing.has(i.id));
+    const restDone = done.filter(i => !openDone.includes(i));
+    const openCount = items.filter(i => i.thread === "open").length;
+    $("tally").innerHTML = '<span><b>'+pend.length+'</b> waiting</span><span><b>'+openCount+'</b> open thread'+(openCount===1?'':'s')+'</span><span><b>'+done.filter(i=>i.status==="approved").length+'</b> approved</span><span><b>'+done.filter(i=>i.status!=="approved").length+'</b> sent back</span>';
+    $("threadsWrap").hidden = !openDone.length;
+    $("threads").innerHTML = openDone.map(i => `
+      <article class="card" data-id="${esc(i.id)}">
+        <div class="meta">${i.ref?'<span class="chip">'+esc(i.ref)+'</span>':''}<span class="status s-${esc(i.status)}">${esc(label[i.status]||i.status)}</span>${i.decidedAt?'<span>'+esc(i.decidedAt)+'</span>':''}</div>
+        <h3 class="title">${esc(i.title)}</h3>
+        ${i.note?'<p class="proposal">“'+esc(i.note)+'”</p>':''}
+        ${threadHTML(i)}
+      </article>`).join("");
+    $("pending").innerHTML = pend.length ? pend.map(i => `
+      <article class="card" data-id="${esc(i.id)}">
+        <div class="meta">${i.ref?'<span class="chip">'+esc(i.ref)+'</span>':''}${i.kind?'<span class="chip">'+esc(i.kind)+'</span>':''}${costChip(i.cost)}</div>
+        <h3 class="title">${esc(i.title)}</h3>
+        <p class="proposal">${esc(i.proposal)}</p>
+        <div class="by">Proposed by ${esc(i.by||"Claude")}${i.createdAt?' · '+esc(i.createdAt):''}</div>
+        <textarea id="note-${esc(i.id)}" placeholder="Note (optional): your taste call, a tweak, a condition">${esc(drafts["note-"+i.id]||"")}</textarea>
+        <div class="actions">
+          <button class="ok" data-act="approved">Approve</button>
+          <button class="chg" data-act="changes">Change</button>
+          <button class="no" data-act="rejected">No</button>
+        </div>
+        ${threadHTML(i)}
+      </article>`).join("") : '<div class="empty">Nothing waiting. Officers add new items here as the work moves.</div>';
+    $("decided").innerHTML = restDone.length ? restDone.map(i => `
+      <div class="row" data-id="${esc(i.id)}"><div class="status s-${esc(i.status)}">${esc(label[i.status]||i.status)}</div>
+      <div><div class="t">${i.ref?esc(i.ref)+' · ':''}${esc(i.title)}</div>${i.note?'<div class="n">“'+esc(i.note)+'”</div>':''}<div class="n">${esc(i.decidedAt||"")}</div>${threadHTML(i)}</div></div>`).join("")
+      : '<div class="row"><div></div><div class="n">Nothing decided yet.</div></div>';
+    if (active) { const el = document.querySelector(`textarea[data-reply="${CSS.escape(active)}"]`); if (el){ el.focus(); el.setSelectionRange(el.value.length, el.value.length); } }
+  }
+  const fail = (what,e) => { $("err").hidden = false; $("err").textContent = what + " (" + (e?.code||"error") + "). Try again."; };
+  col.onSnapshot(snap => { items = snap.docs.map(d => ({id:d.id, ...d.data()})); render(); }, e => fail("The approvals stopped updating — reload the page", e));
+  tcol.onSnapshot(snap => { msgs = snap.docs.map(d => ({id:d.id, ...d.data()})); render(); }, e => fail("The threads stopped updating — reload the page", e));
+  document.addEventListener("input", ev => {
+    const r = ev.target.dataset?.reply; if (r) drafts[r] = ev.target.value;
+    if (ev.target.id?.startsWith("note-")) drafts[ev.target.id] = ev.target.value;
+  });
+  document.addEventListener("click", async ev => {
+    const tb = ev.target.closest("button[data-t]");
+    if (tb) {
+      const id = tb.dataset.id;
+      if (tb.dataset.t === "ask") { composing.add(id); render(); document.querySelector(`textarea[data-reply="${CSS.escape(id)}"]`)?.focus(); return; }
+      if (tb.dataset.t === "send") {
+        const text = (drafts[id]||"").trim(); if (!text) return;
+        tb.disabled = true;
+        try {
+          await tcol.add({card:id, by:"Commander", text, ...stampNow()});
+          await col.doc(id).update({thread:"open"});
+          drafts[id] = ""; composing.delete(id); render();
+        } catch(e) { tb.disabled = false; fail("Couldn't send that message", e); }
+        return;
+      }
+      if (tb.dataset.t === "resolve") {
+        tb.disabled = true;
+        try { const s = stampNow(); await col.doc(id).update({thread:"resolved", threadResolvedAt:s.at}); composing.delete(id); }
+        catch(e) { tb.disabled = false; fail("Couldn't resolve the thread", e); }
+        return;
+      }
+    }
+    const btn = ev.target.closest("button[data-act]"); if (!btn) return;
+    const card = btn.closest(".card"); const id = card.dataset.id;
+    const note = (drafts["note-"+id] || "").trim();
+    card.querySelectorAll("button[data-act]").forEach(b => b.disabled = true);
+    const s = stampNow();
+    try { await col.doc(id).update({status: btn.dataset.act, note, decidedAt: s.at, decidedAtISO: s.atISO}); delete drafts["note-"+id]; }
+    catch(e) { card.querySelectorAll("button[data-act]").forEach(b => b.disabled = false); fail("Couldn't save that decision", e); }
+  });
+})();
+</script>

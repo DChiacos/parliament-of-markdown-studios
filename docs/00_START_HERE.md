@@ -46,6 +46,7 @@ Parliament is an operating architecture for people who work with multiple AI sys
 18. [Relay: the Parliament Post Office](03_OPERATING_SYSTEM/08_RELAY_POST_OFFICE.md) (candidate)
 19. [Relay Protocol and Message Template](04_TEMPLATES/06_RELAY_PROTOCOL_TEMPLATE.md) (candidate)
 20. [Public Memory Pods](06_MEMORY_PODS/README.md)
+21. [Approval Desk starter kit](../tools/approval-desk/README.md) (candidate tool)
 
 ## Release context
 
