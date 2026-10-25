@@ -45,6 +45,7 @@ Parliament is an operating architecture for people who work with multiple AI sys
 17. [Obsidian Vault Guide](05_OBSIDIAN_VAULT.md)
 18. [Relay: the Parliament Post Office](03_OPERATING_SYSTEM/08_RELAY_POST_OFFICE.md) (candidate)
 19. [Relay Protocol and Message Template](04_TEMPLATES/06_RELAY_PROTOCOL_TEMPLATE.md) (candidate)
+20. [Public Memory Pods](06_MEMORY_PODS/README.md)
 
 ## Release context
 
