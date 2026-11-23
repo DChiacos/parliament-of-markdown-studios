@@ -1,6 +1,6 @@
 ---
 title: "Start Here"
-version: "1.1.0"
+version: "1.2.0"
 ---
 
 # Start Here
@@ -23,6 +23,10 @@ Parliament is an operating architecture for people who work with multiple AI sys
 - **Ratification:** Explicit human approval granting a candidate institutional force.
 - **Reserved shell:** A complete but non-authoritative department template held ready for the next distinct procedural subject.
 - **Graveyard:** Preserved inactive history, never current authority.
+- **Runtime skill:** The compact executable file an agent loads to do one job.
+- **SOP package:** The governed home of a runtime skill: authority, procedure, field evidence, supporting material and history.
+- **Officer:** A named fleet role with a commission, required behaviors and its own skill set.
+- **Mission packet:** The durable hand-off that carries work between players.
 
 ## Reading order
 
@@ -37,12 +41,14 @@ Parliament is an operating architecture for people who work with multiple AI sys
 9. [Institutional Compounding](03_OPERATING_SYSTEM/05_INSTITUTIONAL_COMPOUNDING.md)
 10. [Incident-to-SOP Lifecycle](03_OPERATING_SYSTEM/06_INCIDENT_TO_SOP_LIFECYCLE.md)
 11. [Cold-Reader Context Compression](03_OPERATING_SYSTEM/07_COLD_READER_CONTEXT_COMPRESSION.md)
-12. [Executable Commission Template](04_TEMPLATES/01_COMMISSION_TEMPLATE.md)
-13. [Source of Truth Declaration Template](04_TEMPLATES/02_SOT_DECLARATION_TEMPLATE.md)
-14. [Approval Gate Checklist](04_TEMPLATES/03_APPROVAL_GATE_CHECKLIST.md)
-15. [Decision Docket and Candidate Intake Template](04_TEMPLATES/04_DECISION_DOCKET_AND_CANDIDATE_INTAKE.md)
-16. [SOP Department Shell Template](04_TEMPLATES/05_SOP_DEPARTMENT_SHELL_TEMPLATE.md)
-17. [Obsidian Vault Guide](05_OBSIDIAN_VAULT.md)
+12. [SOP Packages and Runtime Skills](03_OPERATING_SYSTEM/08_SOP_PACKAGES_AND_RUNTIME_SKILLS.md)
+13. [Multi-Agent Fleet and Hand-offs](03_OPERATING_SYSTEM/09_MULTI_AGENT_FLEET_AND_HANDOFFS.md)
+14. [Executable Commission Template](04_TEMPLATES/01_COMMISSION_TEMPLATE.md)
+15. [Source of Truth Declaration Template](04_TEMPLATES/02_SOT_DECLARATION_TEMPLATE.md)
+16. [Approval Gate Checklist](04_TEMPLATES/03_APPROVAL_GATE_CHECKLIST.md)
+17. [Decision Docket and Candidate Intake Template](04_TEMPLATES/04_DECISION_DOCKET_AND_CANDIDATE_INTAKE.md)
+18. [SOP Department Shell Template](04_TEMPLATES/05_SOP_DEPARTMENT_SHELL_TEMPLATE.md)
+19. [Obsidian Vault Guide](05_OBSIDIAN_VAULT.md)
 
 ## Release context
 

@@ -1,8 +1,8 @@
 ---
 title: "Public Snapshot Declaration"
-version: "1.1.0"
+version: "1.2.0"
 status: "SANITIZED PUBLIC DERIVATIVE"
-source_cutoff: "Private Parliament v1.1 state reviewed on 2026-08-13"
+source_cutoff: "Private Parliament v2.1 beta state reviewed on 2026-11-23"
 ---
 
 # Public Snapshot Declaration
@@ -15,10 +15,10 @@ Obsidian may render the same local Markdown estate as a connected view. It does 
 
 ## Public source cutoff
 
-- Repository release: `v1.1.0`
+- Repository release: `v1.2.0`
 - Private source class: Parliament institutional Markdown estate
-- Source cutoff: private Parliament v1.1 state reviewed on 2026-08-13
-- Derivative created: 2026-08-13
+- Source cutoff: private Parliament v2.1 beta state reviewed on 2026-11-23
+- Derivative created: 2026-11-23
 
 The declaration intentionally identifies the source class and cutoff without exposing a private filesystem path, document ID, command register, or working commission.
 
@@ -34,7 +34,7 @@ There is no automatic unsanitized private-to-public sync.
 
 ## Version policy
 
-Repository tags identify public snapshot releases. Individual documents carry their own semantic versions and advance only when their content changes materially. Untouched v1.0.0 documents may therefore coexist correctly inside repository release v1.1.0.
+Repository tags identify public snapshot releases. Individual documents carry their own semantic versions and advance only when their content changes materially. Untouched v1.0.0 documents may therefore coexist correctly inside repository release v1.2.0.
 
 Released tags are immutable. Corrections and new capabilities receive successor releases and are recorded in [CHANGELOG.md](CHANGELOG.md).
 

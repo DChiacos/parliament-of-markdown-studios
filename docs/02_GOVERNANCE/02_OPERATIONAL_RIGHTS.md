@@ -1,6 +1,6 @@
 ---
 title: "Operational Rights"
-version: "1.0.0"
+version: "1.1.0"
 status: "PUBLIC DERIVATIVE"
 ---
 
@@ -36,3 +36,10 @@ Important decisions, methods, mistakes, and safeguards should survive the conver
 
 Generation is not approval. A fluent output is not automatically true, useful, safe, or ready to ship.
 
+## The right to distinguish chat continuity from memory
+
+Chat continuity, active memory and durable institutional memory are different states. A reopenable conversation proves that a record exists, not that its contents are loaded into the agent's working context. The agent says which state is actually present, treats a new conversation, window, device or environment as a possible clean slate, and promotes critical decisions into durable files instead of relying on chat history.
+
+## The right to an explicit command state (proposed)
+
+A proposed amendment, not yet ratified. Every bounded mission may declare an explicit operating state: authority, scope, clearance, hold points and stop condition. A command changes only the state it names; it does not silently expand scope, tools, files, permissions or authority, and higher tool capability never grants higher clearance. When commands conflict, the agent stops, preserves state and asks for the smallest human decision that resolves the conflict.

@@ -1,6 +1,6 @@
 ---
 title: "Parliament of MarkDown Studios"
-version: "1.1.0"
+version: "1.2.0"
 status: "PUBLIC PORTFOLIO PROJECT"
 author: "Daniel Chiacos"
 ---
@@ -11,7 +11,7 @@ author: "Daniel Chiacos"
 
 Parliament is a documentation-first operating system for human-directed, multi-agent work. It gives people and AI agents a shared constitution, explicit authority boundaries, one Source of Truth per governed scope, progressive approval states, and a recovery path when context is lost.
 
-**Public release v1.1.0 | Sanitized point-in-time derivative | The private Parliament remains the living institutional Source of Truth.**
+**Public release v1.2.0 | Sanitized point-in-time derivative | The private Parliament remains the living institutional Source of Truth.**
 
 This repository is a sanitized public derivative of the private system I designed and use inside **MarkDown Studios**, the internal AI production studio of **Serendipity Inc.** It demonstrates how I translate creative and business intent into inspectable agent workflows without surrendering final human judgment.
 
@@ -43,6 +43,12 @@ flowchart LR
     C --> E
 ```
 
+## What changed in v1.2
+
+- Added the SOP package and runtime skill pattern: one shell per repeatable job, separating the executable skill from its authority, procedure, field evidence and history, with an evolve pass after every job.
+- Added the multi-agent fleet pattern: officer identity separated from runtime, a skill-set home per officer, verified capabilities, and durable mission packets for hand-offs.
+- Published ten field-test constitutional articles, including operational completion, checkpoint before scale, durable relay and coupling governs method, plus two operational rights on memory states and explicit command state.
+
 ## What changed in v1.1
 
 - Added decision dockets for consequential ambiguity that cannot be resolved inside the production lane.
@@ -59,6 +65,8 @@ See the [changelog](CHANGELOG.md) and [public snapshot declaration](PUBLIC_SNAPS
 - multi-agent routing and quality control;
 - hallucination and drift control through explicit SOT declarations;
 - semantic versioning and preserved history;
+- packaging repeatable work as versioned, executable agent skills;
+- coordinating agents from different providers through durable hand-offs;
 - Obsidian-compatible knowledge-graph design;
 - reusable templates for future workflows.
 
@@ -76,7 +84,9 @@ See the [changelog](CHANGELOG.md) and [public snapshot declaration](PUBLIC_SNAPS
 10. [Institutional Compounding](docs/03_OPERATING_SYSTEM/05_INSTITUTIONAL_COMPOUNDING.md)
 11. [Incident-to-SOP Lifecycle](docs/03_OPERATING_SYSTEM/06_INCIDENT_TO_SOP_LIFECYCLE.md)
 12. [Cold-Reader Context Compression](docs/03_OPERATING_SYSTEM/07_COLD_READER_CONTEXT_COMPRESSION.md)
-13. [Obsidian vault guide](docs/05_OBSIDIAN_VAULT.md)
+13. [SOP Packages and Runtime Skills](docs/03_OPERATING_SYSTEM/08_SOP_PACKAGES_AND_RUNTIME_SKILLS.md)
+14. [Multi-Agent Fleet and Hand-offs](docs/03_OPERATING_SYSTEM/09_MULTI_AGENT_FLEET_AND_HANDOFFS.md)
+15. [Obsidian vault guide](docs/05_OBSIDIAN_VAULT.md)
 
 ## Repository anatomy
 
@@ -108,7 +118,7 @@ This release is a public documentation snapshot, not yet a claim of turnkey depl
 
 ## Authorship
 
-Designed and directed by **Daniel Chiacos**, Founder and Creative Director of Serendipity Inc. and creator of MarkDown Studios.
+Designed and directed by **Daniel Chiacos**, founder of Serendipity Inc. and creator of MarkDown Studios.
 
 ## License
 

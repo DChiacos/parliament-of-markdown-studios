@@ -4,3 +4,4 @@
 *.tmp
 *.bak
 
+scripts/.private_patterns

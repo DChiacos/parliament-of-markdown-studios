@@ -19,14 +19,29 @@ patterns=(
   'micro1'
   'Snorkel'
   'ORLA RIO'
+  'Commander'
+  '\.codex/'
+  'chat [0-9a-f]{8}-'
 )
+
+# Optional local-only patterns (never committed): one regex per line in
+# scripts/.private_patterns. Use it for private project, client and role names
+# that must not appear publicly, including in this script.
+private_file="$ROOT/scripts/.private_patterns"
+if [[ -f "$private_file" ]]; then
+  while IFS= read -r line; do
+    [[ -z "$line" || "$line" == \#* ]] && continue
+    patterns+=("$line")
+  done < "$private_file"
+  echo "Loaded local private patterns."
+fi
 
 for pattern in "${patterns[@]}"; do
   if find . -not -path './.git' -not -path './.git/*' -not -path './scripts/validate_public_repo.sh' -print | rg -n -i "$pattern"; then
     echo "BLOCKED: found unsafe pattern in tracked filename: $pattern"
     fail=1
   fi
-  if rg -n -i -I --hidden --glob '!.git/**' --glob '!scripts/validate_public_repo.sh' "$pattern" .; then
+  if rg -n -i -I --hidden --glob '!.git/**' --glob '!scripts/validate_public_repo.sh' --glob '!scripts/.private_patterns' "$pattern" .; then
     echo "BLOCKED: found unsafe pattern: $pattern"
     fail=1
   fi
@@ -56,30 +71,32 @@ while IFS=: read -r file line target; do
 done < <(rg -n -o '\[[^]]+\]\(([^)]+)\)' --glob '*.md' . | sed -E 's#^([^:]+):([0-9]+):.*\]\(([^)]+)\).*#\1:\2:\3#')
 
 echo "Checking public release identity..."
-if ! rg -q 'Public release v1\.1\.0 \| Sanitized point-in-time derivative' README.md; then
+if ! rg -q 'Public release v1\.2\.0 \| Sanitized point-in-time derivative' README.md; then
   echo "BLOCKED: README release identity is missing or stale."
   fail=1
 fi
-if ! rg -q 'Repository release: `v1\.1\.0`' PUBLIC_SNAPSHOT.md; then
+if ! rg -q 'Repository release: `v1\.2\.0`' PUBLIC_SNAPSHOT.md; then
   echo "BLOCKED: public snapshot release identity is missing or stale."
   fail=1
 fi
 
-echo "Checking required v1.1 routes..."
+echo "Checking required v1.1 and v1.2 routes..."
 required=(
   'docs/02_GOVERNANCE/03_DECISION_DOCKETS.md'
   'docs/03_OPERATING_SYSTEM/06_INCIDENT_TO_SOP_LIFECYCLE.md'
   'docs/03_OPERATING_SYSTEM/07_COLD_READER_CONTEXT_COMPRESSION.md'
   'docs/04_TEMPLATES/04_DECISION_DOCKET_AND_CANDIDATE_INTAKE.md'
   'docs/04_TEMPLATES/05_SOP_DEPARTMENT_SHELL_TEMPLATE.md'
+  'docs/03_OPERATING_SYSTEM/08_SOP_PACKAGES_AND_RUNTIME_SKILLS.md'
+  'docs/03_OPERATING_SYSTEM/09_MULTI_AGENT_FLEET_AND_HANDOFFS.md'
 )
 for path in "${required[@]}"; do
   if [[ ! -f "$path" ]]; then
-    echo "BROKEN: missing required v1.1 artifact: $path"
+    echo "BROKEN: missing required artifact: $path"
     fail=1
   fi
   if ! rg -q -F "$(basename "$path")" docs/00_START_HERE.md; then
-    echo "BROKEN: v1.1 artifact is not routed from Start Here: $path"
+    echo "BROKEN: artifact is not routed from Start Here: $path"
     fail=1
   fi
 done
